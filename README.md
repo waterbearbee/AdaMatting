@@ -1,2 +1,2 @@
 # AdaMatting
-an unofficial pytorch implementation of ICCV 2019 paper "Disentangled Image Matting"
+an pytorch implementation of ICCV 2019 paper "Disentangled Image Matting"
