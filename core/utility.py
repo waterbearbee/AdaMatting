@@ -1,4 +1,5 @@
 import argparse
+import logging
 
 
 def get_args():
@@ -38,4 +39,26 @@ def get_args():
     parser.add_argument('--arch', type=str, default='vgg', help="network structure")
     args = parser.parse_args()
     return args
+    
+
+def get_logger(fname):
+    assert(fname != "")
+    logger = logging.getLogger("DeepImageMatting")
+    logger.setLevel(level = logging.INFO)
+    formatter = logging.Formatter("%(asctime)s-%(filename)s:%(lineno)d-%(levelname)s-%(message)s")
+
+    # log file stream
+    handler = logging.FileHandler(fname)
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(formatter)
+
+    # log console stream
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    console.setFormatter(formatter)
+
+    logger.addHandler(handler)
+    logger.addHandler(console)
+
+    return logger
     

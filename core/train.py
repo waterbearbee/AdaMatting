@@ -1,11 +1,11 @@
 import torch
 import os
-from utility import get_args
+from utility import get_args, get_logger
 import net
 
 def main():
     args = get_args()
-    print(args.gpu)
+    logger = get_logger(args.log)
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
 
