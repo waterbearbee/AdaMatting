@@ -3,7 +3,7 @@ import argparse
 
 def get_args():
     # Training settings
-    parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
+    parser = argparse.ArgumentParser(description='set arguments')
     parser.add_argument('--size_h', type=int, required=True, help="height size of input image")
     parser.add_argument('--size_w', type=int, required=True, help="width size of input image")
     parser.add_argument('--crop_h', type=str, required=True, help="crop height size of input image")
@@ -17,6 +17,7 @@ def get_args():
     parser.add_argument('--step', type=int, default=10, help='epoch of learning decay')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
     parser.add_argument('--cuda', action='store_true', help='use cuda?')
+    parser.add_argument('--gpu', type=str, default="0", help="choose gpus")
     parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
     parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
     parser.add_argument('--resume', type=str, help="checkpoint that model resume from")
