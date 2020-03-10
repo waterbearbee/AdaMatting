@@ -5,6 +5,7 @@ import logging
 def get_args():
     # Training settings
     parser = argparse.ArgumentParser(description='set arguments')
+    parser.add_argument('--mode', type=str, required=True, help="set the program to \'train\' or \'test\'")
     parser.add_argument('--size_h', type=int, required=True, help="height size of input image")
     parser.add_argument('--size_w', type=int, required=True, help="width size of input image")
     parser.add_argument('--crop_h', type=str, required=True, help="crop height size of input image")
@@ -17,7 +18,7 @@ def get_args():
     parser.add_argument('--nEpochs', type=int, default=20, help='number of epochs to train for')
     parser.add_argument('--step', type=int, default=10, help='epoch of learning decay')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
-    parser.add_argument('--cuda', action='store_true', help='use cuda?')
+    parser.add_argument('--cuda', action='store_true', default=False, help='use cuda?')
     parser.add_argument('--gpu', type=str, default="0", help="choose gpus")
     parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
     parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
@@ -35,30 +36,29 @@ def get_args():
     parser.add_argument('--testResDir', type=str, default='', help="test result save to")
     parser.add_argument('--crop_or_resize', type=str, default="whole", choices=["resize", "crop", "whole"], help="how manipulate image before test")
     parser.add_argument('--max_size', type=int, default=1312, help="max size of test image")
-    parser.add_argument('--log', type=str, default='tmplog.txt', help="log file")
+    parser.add_argument('--log', action="store_true", default=False, help="whether store log to log.txt")
     parser.add_argument('--arch', type=str, default='vgg', help="network structure")
     args = parser.parse_args()
     return args
     
 
-def get_logger(fname):
-    assert(fname != "")
-    logger = logging.getLogger("DeepImageMatting")
-    logger.setLevel(level = logging.INFO)
-    formatter = logging.Formatter("%(asctime)s-%(filename)s:%(lineno)d-%(levelname)s-%(message)s")
+def get_logger(flag):
+    logger = logging.getLogger("AdaMatting")
+    logger.setLevel(level=logging.INFO)
+    formatter = logging.Formatter("[%(asctime)s] %(filename)s %(lineno)d: %(levelname)s - %(message)s")
 
     # log file stream
-    handler = logging.FileHandler(fname)
-    handler.setLevel(logging.INFO)
-    handler.setFormatter(formatter)
+    if (flag):
+        handler = logging.FileHandler("log.txt")
+        handler.setLevel(logging.INFO)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
     # log console stream
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
     console.setFormatter(formatter)
 
-    logger.addHandler(handler)
     logger.addHandler(console)
 
     return logger
-    

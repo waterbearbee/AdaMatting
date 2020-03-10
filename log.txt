@@ -1,0 +1,6 @@
+2020-03-10 15:00:54,317 : 10 - INFO - Using GPU: 7
+2020-03-10 15:01:04,968 : 10 - INFO - Using GPU: 7
+2020-03-10 15:02:02,632 : 9 - INFO - test
+2020-03-10 15:02:02,632 : 11 - INFO - Using GPU: 7
+[2020-03-10 15:07:33,648] train.py 10: INFO - Running with GPUs: 7
+[2020-03-10 15:20:32,731] main.py 11: INFO - Program runs in train mode

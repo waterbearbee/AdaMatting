@@ -4,7 +4,8 @@ TRAIN_DATA_ROOT=$DATA_ROOT/Training_set/comp
 TEST_DATA_ROOT=$DATA_ROOT/Test_set/comp
 
 CUDA_VISIBLE_DEVICES=0 \
-python core/train.py \
+python core/main.py \
+    --mode=train \
     --crop_h=320,480,640 \
     --crop_w=320,480,640 \
     --size_h=320 \
@@ -33,6 +34,6 @@ python core/train.py \
     --testResDir=result/tmp \
     --crop_or_resize=whole \
     --max_size=1600 \
-    --log=stage1.txt \
+    --log \
 
     #--resume=model/stage1/ckpt_e1.pth \
