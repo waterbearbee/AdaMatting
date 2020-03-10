@@ -1,3 +1,18 @@
 {
-    "python.pythonPath": "C:\\Users\\28084\\Anaconda3\\python.exe"
+    "python.pythonPath": "/home/zhouruifeng/.conda/envs/pytorch/bin/python",
+    "python.linting.pylintArgs": [
+        "--extension-pkg-whitelist=torch",
+        "--ignored-modules=torch", 
+        "--ignored-classes=torch", 
+        "--disable=C,R,W", 
+        "--enable=unreachable",
+        "--enable=duplicate-key",
+        "--enable=unnecessary-semicolon",
+        "--enable=global-variable-not-assigned",
+        "--enable=unused-variable",
+        "--enable=binary-op-exception",
+        "--enable=bad-format-string",
+        "--enable=anomalous-backslash-in-string",
+        "--enable=bad-open-mode"
+    ]
 }
