@@ -14,5 +14,7 @@
         "--enable=bad-format-string",
         "--enable=anomalous-backslash-in-string",
         "--enable=bad-open-mode"
-    ]
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

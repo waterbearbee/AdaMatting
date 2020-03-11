@@ -4,7 +4,7 @@ TRAIN_DATA_ROOT=$DATA_ROOT/Training_set/comp
 TEST_DATA_ROOT=$DATA_ROOT/Test_set/comp
 
 CUDA_VISIBLE_DEVICES=0 \
-python core/main.py \
+python main.py \
     --mode=train \
     --crop_h=320,480,640 \
     --crop_w=320,480,640 \
@@ -25,7 +25,7 @@ python core/main.py \
     --ckptSaveFreq=1 \
     --pretrain=model/vgg_state_dict.pth \
     --cuda \
-    --gpu=7 \
+    --gpu=6 \
     --stage=1 \
     --testFreq=1 \
     --testImgDir=$TEST_DATA_ROOT/image \
