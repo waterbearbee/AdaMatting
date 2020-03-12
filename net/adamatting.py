@@ -17,12 +17,12 @@ class AdaMatting(nn.Module):
 
         # Encoder
         self.encoder_conv = nn.Sequential(
-            nn.Conv2d(in_channel, 64, kernel_size=7, stride=2, padding=3, bias=True),
+            nn.Conv2d(in_channel, 64, kernel_size=7, stride=1, padding=3, bias=True),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True)
         )
         self.encoder_maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.encoder_resblock1 = self._make_layer(Bottleneck, 64, blocks=2)
+        self.encoder_resblock1 = self._make_layer(Bottleneck, 64, blocks=2, stride=2)
         self.encoder_resblock2 = self._make_layer(Bottleneck, 64, blocks=2, stride=2)
         self.encoder_resblock3 = self._make_layer(Bottleneck, 256, blocks=2, stride=2)
         for m in self.modules():
@@ -33,9 +33,20 @@ class AdaMatting(nn.Module):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
         # T-decoder
-
+        self.t_decoder_upscale1 = nn.Sequential(
+            nn.Conv2d(256 * Bottleneck.expansion, 1024, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
+        self.t_decoder_upscale2 = nn.Sequential(
+            nn.Conv2d(64 * Bottleneck.expansion, 256, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
+        self.t_decoder_upscale3 = nn.Sequential(
+            nn.Conv2d(256 * Bottleneck.expansion, 3 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
         # A-deocder
-
+        
         # Propagation unit
 
 
@@ -56,10 +67,13 @@ class AdaMatting(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, input):
-        x = self.encoder_conv(input)
-        x = self.encoder_maxpool(x)
-        x = self.encoder_resblock1(x)
-        x = self.encoder_resblock2(x)
-        x = self.encoder_resblock3(x)
+    def forward(self, x):
+        x = self.encoder_conv(x)
+        encoder_shallow = self.encoder_maxpool(x)
+        encoder_middle = self.encoder_resblock1(encoder_shallow)
+        encoder_deep = self.encoder_resblock2(encoder_middle)
+        encoder_result = self.encoder_resblock3(encoder_deep)
+        t_decoder_deep = self.t_decoder_upscale1(encoder_result) + encoder_deep
+        t_decoder_middle = self.t_decoder_upscale2(t_decoder_deep) + encoder_middle
+        # t_decoder_shallow = self.t_decoder_upscale3(t_decoder_middle) + encoder_shallow
         return x

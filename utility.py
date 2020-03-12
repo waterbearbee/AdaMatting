@@ -37,7 +37,7 @@ def get_args():
     parser.add_argument('--crop_or_resize', type=str, default="whole", choices=["resize", "crop", "whole"], help="how manipulate image before test")
     parser.add_argument('--max_size', type=int, default=1312, help="max size of test image")
     parser.add_argument('--log', action="store_true", default=False, help="whether store log to log.txt")
-    parser.add_argument('--arch', type=str, default='vgg', help="network structure")
+    parser.add_argument('--debug', action="store_true", default=False, help="whether print verbose debug info")
     args = parser.parse_args()
     return args
     

@@ -1,88 +1,72 @@
-[2020-03-11 14:41:34,127] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:42:04,517] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:42:20,371] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:43:02,815] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:46:17,169] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:46:47,921] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:49:31,612] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:55:23,263] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:57:39,112] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:57:56,990] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:58:13,042] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 14:59:34,370] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:00:33,821] main.py 19: INFO - Running with GPUs: 4,6
-[2020-03-11 15:01:29,654] main.py 20: INFO - Running with GPUs: 4,6
-[2020-03-11 15:01:41,562] main.py 20: INFO - Running with GPUs: 4,6
-[2020-03-11 15:02:24,737] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 15:02:49,949] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 15:03:15,935] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:03:24,945] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:05:18,585] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 15:05:36,014] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 15:06:13,883] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:10:06,646] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:11:04,916] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:12:07,002] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:12:25,483] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 15:12:42,988] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 16:40:03,649] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 17:08:18,875] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 17:12:39,516] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 17:13:30,178] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 17:15:21,559] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 17:21:12,340] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 17:22:42,438] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 17:23:12,184] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 17:23:24,704] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 17:23:24,707] main.py 38: INFO - Program runs in train mode
-[2020-03-11 17:23:36,842] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 17:23:50,238] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 17:28:36,953] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:10:19,998] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:10:39,308] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:11:01,221] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:11:18,633] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:11:35,113] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:13:43,476] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:14:20,393] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:14:48,630] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:17:22,395] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:17:36,061] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:20:14,478] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:20:30,042] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:23:16,363] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:25:02,387] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:25:13,695] main.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:27:31,527] test.py 20: INFO - Running with GPUs: 6
-[2020-03-11 18:29:18,924] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:30:36,805] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:31:02,345] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:32:20,453] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:32:29,030] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:34:02,520] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:34:51,961] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:35:11,020] main.py 19: INFO - Running with GPUs: 6
-[2020-03-11 18:36:03,969] main.py 19: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 18:36:18,777] main.py 20: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 18:36:48,717] main.py 19: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 18:36:59,998] main.py 19: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 18:38:54,117] main.py 21: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 18:39:32,748] main.py 21: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 18:41:01,902] main.py 21: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 18:41:09,641] main.py 44: INFO - Program runs in train mode
-[2020-03-11 19:09:29,881] main.py 21: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 19:10:26,596] main.py 21: INFO - Running with GPUs: 0,1,2,3,4,5,6,7
-[2020-03-11 19:12:00,114] main.py 21: INFO - Running with GPUs: 6
-[2020-03-11 19:12:00,114] main.py 31: INFO - Loading network
-[2020-03-11 19:12:09,473] main.py 34: INFO - Network Loaded
-[2020-03-11 19:12:50,369] main.py 21: INFO - Running with GPUs: 6
-[2020-03-11 19:12:50,369] main.py 31: INFO - Loading network
-[2020-03-11 19:12:59,229] main.py 34: INFO - Network Loaded
-[2020-03-11 19:14:13,352] main.py 21: INFO - Running with GPUs: 6
-[2020-03-11 19:14:13,352] main.py 31: INFO - Loading network
-[2020-03-11 19:14:21,522] main.py 34: INFO - Network Loaded
-[2020-03-11 19:14:21,590] main.py 38: INFO - Program runs in train mode
-[2020-03-11 19:14:50,339] main.py 21: INFO - Running with GPUs: 6
-[2020-03-11 19:14:50,339] main.py 31: INFO - Loading network
-[2020-03-11 19:14:58,586] main.py 34: INFO - Network Loaded
-[2020-03-11 19:14:58,687] main.py 38: INFO - Program runs in train mode
+[2020-03-11 19:21:55,881] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 19:21:55,882] main.py 31: INFO - Loading network
+[2020-03-11 19:22:05,309] main.py 34: INFO - Network Loaded
+[2020-03-11 19:22:05,311] main.py 39: INFO - Program runs in train mode
+[2020-03-11 19:54:34,341] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 19:54:34,341] main.py 31: INFO - Loading network
+[2020-03-11 19:54:42,508] main.py 34: INFO - Network Loaded
+[2020-03-11 19:54:42,568] main.py 39: INFO - Program runs in train mode
+[2020-03-11 20:03:57,176] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 20:03:57,176] main.py 31: INFO - Loading network
+[2020-03-11 20:04:03,933] main.py 34: INFO - Network Loaded
+[2020-03-11 20:11:40,227] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 20:11:40,228] main.py 31: INFO - Loading network
+[2020-03-11 20:11:47,314] main.py 34: INFO - Network Loaded
+[2020-03-11 20:11:47,355] main.py 39: INFO - Program runs in train mode
+[2020-03-11 20:23:57,136] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 20:23:57,136] main.py 31: INFO - Loading network
+[2020-03-11 20:24:06,344] main.py 34: INFO - Network Loaded
+[2020-03-11 20:24:06,450] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:00:13,812] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:00:13,813] main.py 31: INFO - Loading network
+[2020-03-11 21:02:43,658] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:02:43,658] main.py 31: INFO - Loading network
+[2020-03-11 21:02:53,506] main.py 34: INFO - Network Loaded
+[2020-03-11 21:03:40,173] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:03:40,173] main.py 31: INFO - Loading network
+[2020-03-11 21:03:48,618] main.py 34: INFO - Network Loaded
+[2020-03-11 21:06:39,139] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:06:39,140] main.py 31: INFO - Loading network
+[2020-03-11 21:06:48,917] main.py 34: INFO - Network Loaded
+[2020-03-11 21:06:49,009] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:09:20,959] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:09:20,959] main.py 31: INFO - Loading network
+[2020-03-11 21:09:29,276] main.py 34: INFO - Network Loaded
+[2020-03-11 21:09:29,329] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:10:19,897] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:10:19,897] main.py 31: INFO - Loading network
+[2020-03-11 21:10:28,560] main.py 34: INFO - Network Loaded
+[2020-03-11 21:10:28,618] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:24:36,607] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:24:36,607] main.py 31: INFO - Loading network
+[2020-03-11 21:24:45,082] main.py 34: INFO - Network Loaded
+[2020-03-11 21:26:33,351] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:26:33,351] main.py 31: INFO - Loading network
+[2020-03-11 21:26:41,831] main.py 34: INFO - Network Loaded
+[2020-03-11 21:26:53,382] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:26:53,382] main.py 31: INFO - Loading network
+[2020-03-11 21:27:00,901] main.py 34: INFO - Network Loaded
+[2020-03-11 21:27:00,940] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:32:13,808] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:32:13,809] main.py 31: INFO - Loading network
+[2020-03-11 21:32:22,720] main.py 34: INFO - Network Loaded
+[2020-03-11 21:32:22,753] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:33:03,514] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:33:03,514] main.py 31: INFO - Loading network
+[2020-03-11 21:33:12,759] main.py 34: INFO - Network Loaded
+[2020-03-11 21:33:12,789] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:33:36,707] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:33:36,709] main.py 31: INFO - Loading network
+[2020-03-11 21:33:44,593] main.py 34: INFO - Network Loaded
+[2020-03-11 21:33:44,673] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:34:09,674] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:34:09,674] main.py 31: INFO - Loading network
+[2020-03-11 21:34:17,464] main.py 34: INFO - Network Loaded
+[2020-03-11 21:34:17,521] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:34:32,635] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:34:32,636] main.py 31: INFO - Loading network
+[2020-03-11 21:34:40,360] main.py 34: INFO - Network Loaded
+[2020-03-11 21:34:40,450] main.py 39: INFO - Program runs in train mode
+[2020-03-11 21:34:53,147] main.py 21: INFO - Running with GPUs: 6
+[2020-03-11 21:34:53,147] main.py 31: INFO - Loading network
+[2020-03-11 21:35:01,290] main.py 34: INFO - Network Loaded

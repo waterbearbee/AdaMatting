@@ -32,7 +32,8 @@ def main():
     model = AdaMatting(in_channel=4)
     model = model.cuda()
     logger.info("Network Loaded")
-    summary(model, (4, 320, 320))
+    if args.debug:
+        summary(model, (4, 320, 320))
 
     if args.mode == "train":
         logger.info("Program runs in train mode")

@@ -35,5 +35,6 @@ python main.py \
     --crop_or_resize=whole \
     --max_size=1600 \
     --log \
+    --debug \
 
     #--resume=model/stage1/ckpt_e1.pth \
