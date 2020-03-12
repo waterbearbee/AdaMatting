@@ -7,6 +7,7 @@ import sys
 o_path = os.getcwd()
 sys.path.append(os.path.join(o_path, "net"))
 from resblock import Bottleneck
+from gcn import GCN
 
 
 class AdaMatting(nn.Module):
@@ -32,22 +33,46 @@ class AdaMatting(nn.Module):
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
+        # Shortcuts
+        self.shortcut_shallow = GCN(64, 32)
+        self.shortcut_middle = GCN(64 * Bottleneck.expansion, 64)
+        self.shortcut_deep = GCN(64 * Bottleneck.expansion, 256)
         # T-decoder
         self.t_decoder_upscale1 = nn.Sequential(
-            nn.Conv2d(256 * Bottleneck.expansion, 1024, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.Conv2d(256 * Bottleneck.expansion, 256 * 4, kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
         self.t_decoder_upscale2 = nn.Sequential(
-            nn.Conv2d(64 * Bottleneck.expansion, 256, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.Conv2d(256, 64 * 4, kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
         self.t_decoder_upscale3 = nn.Sequential(
-            nn.Conv2d(256 * Bottleneck.expansion, 3 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
+            nn.Conv2d(64, 32 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
+        self.t_decoder_upscale4 = nn.Sequential(
+            nn.Conv2d(32, 3 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
         # A-deocder
-        
+        self.a_decoder_upscale1 = nn.Sequential(
+            nn.Conv2d(256 * Bottleneck.expansion, 256 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
+        self.a_decoder_upscale2 = nn.Sequential(
+            nn.Conv2d(256, 64 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
+        self.a_decoder_upscale3 = nn.Sequential(
+            nn.Conv2d(64, 32 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
+        self.a_decoder_upscale4 = nn.Sequential(
+            nn.Conv2d(32, 1 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
         # Propagation unit
+        
 
 
     def _make_layer(self, block, planes, blocks, stride=1):
@@ -68,12 +93,25 @@ class AdaMatting(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        x = self.encoder_conv(x)
-        encoder_shallow = self.encoder_maxpool(x)
-        encoder_middle = self.encoder_resblock1(encoder_shallow)
-        encoder_deep = self.encoder_resblock2(encoder_middle)
-        encoder_result = self.encoder_resblock3(encoder_deep)
-        t_decoder_deep = self.t_decoder_upscale1(encoder_result) + encoder_deep
-        t_decoder_middle = self.t_decoder_upscale2(t_decoder_deep) + encoder_middle
-        # t_decoder_shallow = self.t_decoder_upscale3(t_decoder_middle) + encoder_shallow
-        return x
+        x = self.encoder_conv(x) # 64
+        encoder_shallow = self.encoder_maxpool(x) # 64
+        encoder_middle = self.encoder_resblock1(encoder_shallow) # 256
+        encoder_deep = self.encoder_resblock2(encoder_middle) # 256
+        encoder_result = self.encoder_resblock3(encoder_deep) # 1024
+
+        shortcut_deep = self.shortcut_deep(encoder_deep)
+        shortcut_middle = self.shortcut_middle(encoder_middle)
+        shortcut_shallow = self.shortcut_shallow(encoder_shallow)
+
+        t_decoder_deep = self.t_decoder_upscale1(encoder_result) + shortcut_deep # 256
+        t_decoder_middle = self.t_decoder_upscale2(t_decoder_deep) + shortcut_middle # 64
+        t_decoder_shallow = self.t_decoder_upscale3(t_decoder_middle) # 32
+        t_decoder = self.t_decoder_upscale4(t_decoder_shallow)
+
+        a_decoder_deep = self.a_decoder_upscale1(encoder_result)
+        a_decoder_middle = self.a_decoder_upscale2(a_decoder_deep) + shortcut_middle # 64
+        a_decoder_shallow = self.a_decoder_upscale3(a_decoder_middle) + shortcut_shallow # 32
+        a_decoder = self.a_decoder_upscale4(a_decoder_shallow)
+
+
+        return t_decoder
