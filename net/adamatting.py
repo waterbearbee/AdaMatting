@@ -87,12 +87,13 @@ class AdaMatting(nn.Module):
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
-        for i in range(1, blocks):
+        for _ in range(1, blocks):
             layers.append(block(self.inplanes, planes))
 
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        raw = x
         x = self.encoder_conv(x) # 64
         encoder_shallow = self.encoder_maxpool(x) # 64
         encoder_middle = self.encoder_resblock1(encoder_shallow) # 256
@@ -107,11 +108,14 @@ class AdaMatting(nn.Module):
         t_decoder_middle = self.t_decoder_upscale2(t_decoder_deep) + shortcut_middle # 64
         t_decoder_shallow = self.t_decoder_upscale3(t_decoder_middle) # 32
         t_decoder = self.t_decoder_upscale4(t_decoder_shallow)
+        t_argmax = t_decoder.argmax(dim=1)
 
         a_decoder_deep = self.a_decoder_upscale1(encoder_result)
         a_decoder_middle = self.a_decoder_upscale2(a_decoder_deep) + shortcut_middle # 64
         a_decoder_shallow = self.a_decoder_upscale3(a_decoder_middle) + shortcut_shallow # 32
         a_decoder = self.a_decoder_upscale4(a_decoder_shallow)
+
+        prop_unit_input = torch.cat((raw, torch.unsqueeze(t_argmax, dim=1).float(), a_decoder), dim=1) # 6
 
 
         return t_decoder
