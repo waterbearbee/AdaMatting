@@ -1,3 +1,5 @@
+# ResNet implementation based on https://github.com/Cadene/pretrained-models.pytorch/blob/master/pretrainedmodels/models/fbresnet.py
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

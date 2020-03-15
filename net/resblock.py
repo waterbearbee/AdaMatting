@@ -1,3 +1,5 @@
+# Use the implementation from https://github.com/Cadene/pretrained-models.pytorch/blob/master/pretrainedmodels/models/fbresnet.py
+
 import torch
 import torch.nn as nn
 
