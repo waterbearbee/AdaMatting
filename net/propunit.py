@@ -1,10 +1,10 @@
-# Use the implementation from https://github.com/ndrplz/ConvLSTM_pytorch/blob/master/convlstm.py
+# this implementation is based on https://github.com/ndrplz/ConvLSTM_pytorch/blob/master/convlstm.py
 
 import torch.nn as nn
 import torch
 
 
-class ConvLSTMCell(nn.Module):
+class PropUnitCell(nn.Module):
 
     def __init__(self, input_dim, hidden_dim, kernel_size, bias):
         """
@@ -21,7 +21,7 @@ class ConvLSTMCell(nn.Module):
             Whether or not to add the bias.
         """
 
-        super(ConvLSTMCell, self).__init__()
+        super(PropUnitCell, self).__init__()
 
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
@@ -61,7 +61,7 @@ class ConvLSTMCell(nn.Module):
                 torch.zeros(batch_size, self.hidden_dim, height, width, device=self.conv.weight.device))
 
 
-class ConvLSTM(nn.Module):
+class PropUnit(nn.Module):
 
     """
     Parameters:
@@ -89,7 +89,7 @@ class ConvLSTM(nn.Module):
 
     def __init__(self, input_dim, hidden_dim, kernel_size, num_layers,
                  batch_first=False, bias=True, return_all_layers=False):
-        super(ConvLSTM, self).__init__()
+        super(PropUnit, self).__init__()
 
         self._check_kernel_size_consistency(kernel_size)
 
@@ -111,7 +111,7 @@ class ConvLSTM(nn.Module):
         for i in range(0, self.num_layers):
             cur_input_dim = self.input_dim if i == 0 else self.hidden_dim[i - 1]
 
-            cell_list.append(ConvLSTMCell(input_dim=cur_input_dim,
+            cell_list.append(PropUnitCell(input_dim=cur_input_dim,
                                           hidden_dim=self.hidden_dim[i],
                                           kernel_size=self.kernel_size[i],
                                           bias=self.bias))

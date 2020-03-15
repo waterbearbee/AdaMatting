@@ -8,6 +8,7 @@ o_path = os.getcwd()
 sys.path.append(os.path.join(o_path, "net"))
 from resblock import Bottleneck
 from gcn import GCN
+from propunit import PropUnit
 
 
 class AdaMatting(nn.Module):
@@ -118,4 +119,4 @@ class AdaMatting(nn.Module):
         prop_unit_input = torch.cat((raw, torch.unsqueeze(t_argmax, dim=1).float(), a_decoder), dim=1) # 6
 
 
-        return t_decoder
+        return prop_unit_input
