@@ -2,17 +2,19 @@ import os
 import torch
 import torchvision
 from utility import get_args, get_logger
-from net.adamatting import AdaMatting
 from tensorboardX import SummaryWriter
+
+from net.adamatting import AdaMatting
+from loss import task_uncertainty_loss
+print(torch.cuda.device_count())
 # os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3,4,5,6,7"
-def train():
-    pass
+def train(model, args):
+    model.train()
 
 def test():
     pass
 
 def main():
-    print(torch.cuda.device_count())
     args = get_args()
     logger = get_logger(args.log)
 
@@ -27,7 +29,7 @@ def main():
     model = AdaMatting(in_channel=4)
     if args.cuda:
         model = model.cuda(device=device_ids[0])
-        if len(device_ids) > 1:
+        if len(device_ids) > 1 and args.mode=="train":
             logger.info("Loading with multiple GPUs")
             model = torch.nn.DataParallel(model, device_ids=device_ids)
     logger.info("Network Loaded")
@@ -36,7 +38,9 @@ def main():
 
     if args.mode == "train":
         logger.info("Program runs in train mode")
-        train()
+        train(model=model, \
+            args=args
+        )
     elif args.mode == "test":
         logger.info("Program runs in test mode")
         test()
