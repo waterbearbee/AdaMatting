@@ -12,6 +12,7 @@ def test():
     pass
 
 def main():
+    print(torch.cuda.device_count())
     args = get_args()
     logger = get_logger(args.log)
 

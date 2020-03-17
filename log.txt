@@ -1,6 +1,0 @@
-[2020-03-16 20:13:35,810] main.py 24: INFO - Loading network
-[2020-03-16 20:13:45,576] main.py 29: INFO - Loading with multiple GPUs
-[2020-03-16 20:13:45,579] main.py 31: INFO - Network Loaded
-[2020-03-16 20:13:45,580] main.py 36: INFO - Program runs in train mode
-[2020-03-16 21:24:59,020] main.py 24: INFO - Loading network
-[2020-03-16 21:25:09,313] main.py 31: INFO - Network Loaded
