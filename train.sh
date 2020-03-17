@@ -25,7 +25,7 @@ python main.py \
     --ckptSaveFreq=1 \
     --pretrain=model/vgg_state_dict.pth \
     --cuda \
-    --gpu=6 \
+    --gpu=3 \
     --stage=1 \
     --testFreq=1 \
     --testImgDir=$TEST_DATA_ROOT/image \

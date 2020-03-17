@@ -3,8 +3,7 @@ import torch
 import torchvision
 from utility import get_args, get_logger
 from net.adamatting import AdaMatting
-from torchsummary import summary
-
+os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3,4,5,6,7"
 def train():
     pass
 
@@ -14,15 +13,9 @@ def test():
 def main():
     args = get_args()
     logger = get_logger(args.log)
-    
-    os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
-    if args.cuda:
-        if torch.cuda.is_available():
-            logger.info("Running with GPUs: %s" % args.gpu)
-        else:
-            raise Exception("No GPU found, please run without --cuda")
-    else:
-        logger.info("Running without GPU")
+
+    device_ids = args.gpu.split(',')
+    device_ids = list(map(int, device_ids))
 
     if args.mode != "train" and args.mode != "test":
         logger.info("Invalid mode. Set mode to \'train\' or \'test\'")
@@ -30,10 +23,14 @@ def main():
 
     logger.info("Loading network")
     model = AdaMatting(in_channel=4)
-    model = model.cuda()
+    if args.cuda:
+        model = model.cuda(device=device_ids[0])
+        if len(device_ids) > 1:
+            logger.info("Loading with multiple GPUs")
+            model = torch.nn.DataParallel(model, device_ids=device_ids)
     logger.info("Network Loaded")
-    if args.debug:
-        summary(model, (4, 320, 320))
+
+    model(torch.rand([2, 4, 320, 320], device="cuda"))
 
     if args.mode == "train":
         logger.info("Program runs in train mode")

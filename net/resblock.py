@@ -1,4 +1,4 @@
-# Use the implementation from https://github.com/Cadene/pretrained-models.pytorch/blob/master/pretrainedmodels/models/fbresnet.py
+# this implementation is based on https://github.com/Cadene/pretrained-models.pytorch/blob/master/pretrainedmodels/models/fbresnet.py
 
 import torch
 import torch.nn as nn
@@ -41,3 +41,21 @@ class Bottleneck(nn.Module):
         out = self.relu(out)
 
         return out
+
+
+def make_resblock(inplanes, planes, blocks, stride=1, block=Bottleneck):
+    downsample = None
+    if stride != 1 or inplanes != planes * block.expansion:
+        downsample = nn.Sequential(
+            nn.Conv2d(inplanes, planes * block.expansion,
+                        kernel_size=1, stride=stride, bias=True),
+            nn.BatchNorm2d(planes * block.expansion),
+        )
+
+    layers = []
+    layers.append(block(inplanes, planes, stride, downsample))
+    inplanes = planes * block.expansion
+    for _ in range(1, blocks):
+        layers.append(block(inplanes, planes))
+
+    return nn.Sequential(*layers), inplanes

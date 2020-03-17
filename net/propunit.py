@@ -2,6 +2,7 @@
 
 import torch.nn as nn
 import torch
+from resblock import Bottleneck, make_resblock
 
 
 class PropUnitCell(nn.Module):
@@ -30,7 +31,9 @@ class PropUnitCell(nn.Module):
         self.padding = kernel_size[0] // 2, kernel_size[1] // 2
         self.bias = bias
 
-        self.conv = nn.Conv2d(in_channels=self.input_dim + self.hidden_dim,
+        self.resblock, _ = make_resblock(self.input_dim, 64, blocks=2, stride=1, block=Bottleneck)
+
+        self.conv = nn.Conv2d(in_channels=64 * Bottleneck.expansion + self.hidden_dim,
                               out_channels=4 * self.hidden_dim,
                               kernel_size=self.kernel_size,
                               padding=self.padding,
@@ -39,9 +42,9 @@ class PropUnitCell(nn.Module):
 
     def forward(self, input_tensor, cur_state):
         h_cur, c_cur = cur_state
-
-        combined = torch.cat([input_tensor, h_cur], dim=1)  # concatenate along channel axis
-
+        
+        input_features = self.resblock(input_tensor)
+        combined = torch.cat([input_features, h_cur], dim=1)  # concatenate along channel axis
         combined_conv = self.conv(combined)
         cc_i, cc_f, cc_o, cc_g = torch.split(combined_conv, self.hidden_dim, dim=1)
         i = torch.sigmoid(cc_i)
