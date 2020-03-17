@@ -3,7 +3,8 @@ import torch
 import torchvision
 from utility import get_args, get_logger
 from net.adamatting import AdaMatting
-os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3,4,5,6,7"
+from tensorboardX import SummaryWriter
+# os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3,4,5,6,7"
 def train():
     pass
 
