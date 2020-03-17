@@ -1,5 +1,3 @@
-# ResNet implementation is based on https://github.com/Cadene/pretrained-models.pytorch/blob/master/pretrainedmodels/models/fbresnet.py
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -89,6 +87,10 @@ class AdaMatting(nn.Module):
             bias=True,
             return_all_layers=False
         )
+
+        # Task uncertainty loss
+        self.sigma_t = nn.Parameter(torch.Tensor([0]))
+        self.sigma_a = nn.Parameter(torch.Tensor([0]))
 
 
     def forward(self, x):
