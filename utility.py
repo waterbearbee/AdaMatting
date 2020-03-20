@@ -8,6 +8,7 @@ import cv2 as cv
 from tqdm import tqdm
 from multiprocessing import Pool
 from PIL import Image
+import random
 import argparse
 import logging
 
@@ -218,6 +219,31 @@ def composite_dataset(raw_data_path, logger):
         logger.info('Compositing testing images')
         do_composite(raw_data_path, 20, "test")
         logger.info('Testing images composited')
+
+
+def gen_train_valid_names(logger):
+    logger.info("Start generating train/valid name files")
+    num_fgs = 431
+    # num_bgs = 43100
+    num_bgs_per_fg = 100
+    num_valid = 8620
+
+    names = []
+    bcount = 0
+    for fcount in range(num_fgs):
+        for _ in range(num_bgs_per_fg):
+            names.append(str(fcount) + '_' + str(bcount) + '.png')
+            bcount += 1
+
+    valid_names = random.sample(names, num_valid)
+    train_names = [n for n in names if n not in valid_names]
+
+    with open('dataset/valid_names.txt', 'w') as file:
+        file.write('\n'.join(valid_names))
+
+    with open('dataset/train_names.txt', 'w') as file:
+        file.write('\n'.join(train_names))
+    logger.info("Generated train/valid name files")
 
 
 def get_args():

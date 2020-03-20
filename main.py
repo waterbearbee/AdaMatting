@@ -1,14 +1,15 @@
 import os
 import torch
 import torchvision
-from utility import get_args, get_logger, composite_dataset
+from utility import get_args, get_logger, composite_dataset, gen_train_valid_names
 from tensorboardX import SummaryWriter
 
+from dataset.dataset import AdaMattingDataset
 from net.adamatting import AdaMatting
 from loss import task_uncertainty_loss
 
 
-def train(model, args):
+def train(model, args, logger):
     model.train()
     for _ in range(1000):
         tmp_trimap = (torch.rand([2, 320, 320]) * 3).long().cuda()
@@ -51,13 +52,14 @@ def main():
 
     if args.mode == "train":
         logger.info("Program runs in train mode")
-        train(model=model, args=args)
+        train(model=model, args=args, logger=logger)
     elif args.mode == "test":
         logger.info("Program runs in test mode")
         test()
     elif args.mode == "prep":
         logger.info("Program runs in prep mode")
         composite_dataset(args.raw_data_path, logger)
+        gen_train_valid_names(logger)
 
 
 if __name__ == "__main__":
