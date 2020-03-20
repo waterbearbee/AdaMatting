@@ -27,7 +27,7 @@ class AdaMatting(nn.Module):
         self.encoder_maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.encoder_resblock1, encoder_inplanes = make_resblock(encoder_inplanes, 64, blocks=2, stride=2, block=Bottleneck)
         self.encoder_resblock2, encoder_inplanes = make_resblock(encoder_inplanes, 64, blocks=2, stride=2, block=Bottleneck)
-        self.encoder_resblock3, encoder_inplanes = make_resblock(encoder_inplanes, 256, blocks=2, stride=2, block=Bottleneck)
+        self.encoder_resblock3, encoder_inplanes = make_resblock(encoder_inplanes, 64, blocks=2, stride=2, block=Bottleneck)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
@@ -37,60 +37,58 @@ class AdaMatting(nn.Module):
                 m.bias.data.zero_()
         
         # Shortcuts
-        self.shortcut_shallow = GCN(64, 32)
-        self.shortcut_middle = GCN(64 * Bottleneck.expansion, 64)
-        self.shortcut_deep = GCN(64 * Bottleneck.expansion, 256)
+        self.shortcut_shallow = GCN(64, 16)
+        self.shortcut_middle = GCN(64 * Bottleneck.expansion, 32)
+        self.shortcut_deep = GCN(64 * Bottleneck.expansion, 64)
 
         # T-decoder
         self.t_decoder_upscale1 = nn.Sequential(
-            nn.Conv2d(256 * Bottleneck.expansion, 256 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.Conv2d(64 * Bottleneck.expansion, 64 * 4, kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
         self.t_decoder_upscale2 = nn.Sequential(
-            nn.Conv2d(256, 64 * 4, kernel_size=7, stride=1, padding=3, bias=True),
-            nn.PixelShuffle(2)
-        )
-        self.t_decoder_upscale3 = nn.Sequential(
             nn.Conv2d(64, 32 * 4, kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
+        self.t_decoder_upscale3 = nn.Sequential(
+            nn.Conv2d(32, 16 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
         self.t_decoder_upscale4 = nn.Sequential(
-            nn.Conv2d(32, 3 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
+            nn.Conv2d(16, 3 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
 
         # A-deocder
         self.a_decoder_upscale1 = nn.Sequential(
-            nn.Conv2d(256 * Bottleneck.expansion, 256 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.Conv2d(64 * Bottleneck.expansion, 64 * 4, kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
         self.a_decoder_upscale2 = nn.Sequential(
-            nn.Conv2d(256, 64 * 4, kernel_size=7, stride=1, padding=3, bias=True),
-            nn.PixelShuffle(2)
-        )
-        self.a_decoder_upscale3 = nn.Sequential(
             nn.Conv2d(64, 32 * 4, kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
+        self.a_decoder_upscale3 = nn.Sequential(
+            nn.Conv2d(32, 16 * 4, kernel_size=7, stride=1, padding=3, bias=True),
+            nn.PixelShuffle(2)
+        )
         self.a_decoder_upscale4 = nn.Sequential(
-            nn.Conv2d(32, 1 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
+            nn.Conv2d(16, 1 * (2 ** 2), kernel_size=7, stride=1, padding=3, bias=True),
             nn.PixelShuffle(2)
         )
 
         # Propagation unit
         self.propunit = PropUnit(
             input_dim=4 + 1 + 1,
-            hidden_dim=[64, 64, 128],
+            hidden_dim=[1],
             kernel_size=(3, 3),
-            num_layers=3,
-            batch_first=True,
-            bias=True,
-            return_all_layers=False
-        )
+            num_layers=1,
+            seq_len=3,
+            bias=True)
 
         # Task uncertainty loss
-        self.sigma_t = nn.Parameter(torch.Tensor([0]))
-        self.sigma_a = nn.Parameter(torch.Tensor([0]))
+        self.sigma_t = nn.Parameter(torch.Tensor([4.0]))
+        self.sigma_a = nn.Parameter(torch.Tensor([4.0]))
 
 
     def forward(self, x):
@@ -99,25 +97,24 @@ class AdaMatting(nn.Module):
         encoder_shallow = self.encoder_maxpool(x) # 64
         encoder_middle = self.encoder_resblock1(encoder_shallow) # 256
         encoder_deep = self.encoder_resblock2(encoder_middle) # 256
-        encoder_result = self.encoder_resblock3(encoder_deep) # 1024
+        encoder_result = self.encoder_resblock3(encoder_deep) # 256
 
-        shortcut_deep = self.shortcut_deep(encoder_deep)
-        shortcut_middle = self.shortcut_middle(encoder_middle)
-        shortcut_shallow = self.shortcut_shallow(encoder_shallow)
+        shortcut_deep = self.shortcut_deep(encoder_deep) # 64
+        shortcut_middle = self.shortcut_middle(encoder_middle) # 32
+        shortcut_shallow = self.shortcut_shallow(encoder_shallow) # 16
 
-        t_decoder_deep = self.t_decoder_upscale1(encoder_result) + shortcut_deep # 256
-        t_decoder_middle = self.t_decoder_upscale2(t_decoder_deep) + shortcut_middle # 64
-        t_decoder_shallow = self.t_decoder_upscale3(t_decoder_middle) # 32
+        t_decoder_deep = self.t_decoder_upscale1(encoder_result) + shortcut_deep # 64
+        t_decoder_middle = self.t_decoder_upscale2(t_decoder_deep) + shortcut_middle # 32
+        t_decoder_shallow = self.t_decoder_upscale3(t_decoder_middle) # 16
         trimap_adaption = self.t_decoder_upscale4(t_decoder_shallow)
         t_argmax = trimap_adaption.argmax(dim=1)
 
-        a_decoder_deep = self.a_decoder_upscale1(encoder_result)
-        a_decoder_middle = self.a_decoder_upscale2(a_decoder_deep) + shortcut_middle # 64
-        a_decoder_shallow = self.a_decoder_upscale3(a_decoder_middle) + shortcut_shallow # 32
+        a_decoder_deep = self.a_decoder_upscale1(encoder_result) # 64
+        a_decoder_middle = self.a_decoder_upscale2(a_decoder_deep) + shortcut_middle # 32
+        a_decoder_shallow = self.a_decoder_upscale3(a_decoder_middle) + shortcut_shallow # 16
         a_decoder = self.a_decoder_upscale4(a_decoder_shallow)
 
-        propunit_input = torch.cat((raw, torch.unsqueeze(t_argmax, dim=1).float(), a_decoder), dim=1) # 6
-        propunit_input = torch.stack([propunit_input, propunit_input, propunit_input], dim = 1)
+        propunit_input = torch.cat((raw, torch.unsqueeze(t_argmax, dim=1).float(), a_decoder), dim=1) # 
         alpha_estimation = self.propunit(propunit_input)
 
-        return trimap_adaption, alpha_estimation
+        return trimap_adaption, t_argmax, alpha_estimation, self.sigma_t, self.sigma_a

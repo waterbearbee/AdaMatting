@@ -3,9 +3,8 @@ DATA_ROOT=/data/datasets/im/pytorchdim/Combined_Dataset
 TRAIN_DATA_ROOT=$DATA_ROOT/Training_set/comp
 TEST_DATA_ROOT=$DATA_ROOT/Test_set/comp
 
-CUDA_VISIBLE_DEVICES=0 \
 python main.py \
-    --mode=train \
+    --mode=prep \
     --crop_h=320,480,640 \
     --crop_w=320,480,640 \
     --size_h=320 \
@@ -15,8 +14,8 @@ python main.py \
     --bgDir=$TRAIN_DATA_ROOT/bg \
     --imgDir=$TRAIN_DATA_ROOT/image \
     --saveDir=model/stage1 \
-    --batchSize=16 \
-    --nEpochs=12 \
+    --batch_size=16 \
+    --epochs=12 \
     --step=-1 \
     --lr=0.00001 \
     --wl_weight=0.5 \
@@ -25,8 +24,7 @@ python main.py \
     --ckptSaveFreq=1 \
     --pretrain=model/vgg_state_dict.pth \
     --cuda \
-    --gpu=3 \
-    --stage=1 \
+    --gpu=2 \
     --testFreq=1 \
     --testImgDir=$TEST_DATA_ROOT/image \
     --testTrimapDir=$TEST_DATA_ROOT/trimap \

@@ -2,6 +2,7 @@
     "python.pythonPath": "/home/zhouruifeng/.conda/envs/pytorch/bin/python",
     "python.linting.pylintArgs": [
         "--extension-pkg-whitelist=torch",
+        "--extension-pkg-whitelist=cv2",
         "--ignored-modules=torch", 
         "--ignored-classes=torch", 
         "--disable=C,R,W", 
