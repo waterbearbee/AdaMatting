@@ -1,5 +1,20 @@
+import torch
 import argparse
 import logging
+
+
+def save_checkpoint(epoch, model, optimizer, cur_iter, max_iter, loss, is_best, ckpt_path):
+    state = {'epoch': epoch,
+             'model': model,
+             'optimizer': optimizer,
+             'cur_iter': cur_iter,
+             'max_iter': max_iter}
+    filename = ckpt_path + "ckpt_{}_{}.tar".format(epoch, loss)
+    torch.save(state, filename)
+    # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
+    if is_best:
+        filename = ckpt_path + "ckpt_{}_{}_best.tar".format(epoch, loss)
+        torch.save(state, filename)
 
 
 def poly_lr_scheduler(optimizer, init_lr, iter, max_iter=100, power=0.9):
@@ -17,6 +32,27 @@ def poly_lr_scheduler(optimizer, init_lr, iter, max_iter=100, power=0.9):
     return lr
 
 
+class AverageMeter(object):
+    """
+    Keeps track of the most recent value, average, sum, and count of a metric.
+    """
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
+
+
 def get_args():
     # Training settings
     parser = argparse.ArgumentParser(description='set arguments')
@@ -30,17 +66,12 @@ def get_args():
     parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
     parser.add_argument('--cuda', action='store_true', default=False, help='use cuda?')
     parser.add_argument('--gpu', type=str, default="0", help="choose gpus")
-    parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
-    parser.add_argument('--resume', type=str, help="checkpoint that model resume from")
-    parser.add_argument('--testImgDir', type=str, default='', help="test image")
-    parser.add_argument('--testTrimapDir', type=str, default='', help="test trimap")
-    parser.add_argument('--testAlphaDir', type=str, default='', help="test alpha ground truth")
-    parser.add_argument('--testResDir', type=str, default='', help="test result save to")
     parser.add_argument('--crop_or_resize', type=str, default="whole", choices=["resize", "crop", "whole"], help="how manipulate image before test")
     parser.add_argument('--max_size', type=int, default=1312, help="max size of test image")
     parser.add_argument('--write_log', action="store_true", default=False, help="whether store log to log.txt")
-    parser.add_argument('--debug', action="store_true", default=False, help="whether print verbose debug info")
     parser.add_argument('--raw_data_path', type=str, default="/data/datasets/im/AdaMatting/", help="dir where datasets are stored")
+    parser.add_argument('--ckpt_path', type=str, default="./ckpts/")
+    parser.add_argument('--save_ckpt', action="store_true", default=False, help="whether save checkpoint every 10 epochs")
     args = parser.parse_args()
     return args
 
@@ -48,7 +79,7 @@ def get_args():
 def get_logger(flag):
     logger = logging.getLogger("AdaMatting")
     logger.setLevel(level=logging.INFO)
-    formatter = logging.Formatter("[%(asctime)s] %(filename)s %(lineno)d: %(levelname)s - %(message)s")
+    formatter = logging.Formatter("[%(asctime)s] %(lineno)d: %(levelname)s - %(message)s")
 
     # log file stream
     if (flag):
