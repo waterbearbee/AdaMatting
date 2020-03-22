@@ -9,11 +9,11 @@ def save_checkpoint(epoch, model, optimizer, cur_iter, max_iter, loss, is_best, 
              'optimizer': optimizer,
              'cur_iter': cur_iter,
              'max_iter': max_iter}
-    filename = ckpt_path + "ckpt_{}_{}.tar".format(epoch, loss)
+    filename = ckpt_path + "ckpt_{:03d}_{:.4f}.tar".format(epoch, loss)
     torch.save(state, filename)
     # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
     if is_best:
-        filename = ckpt_path + "ckpt_{}_{}_best.tar".format(epoch, loss)
+        filename = ckpt_path + "ckpt_{:03d}_{:.4f}_best.tar".format(epoch, loss)
         torch.save(state, filename)
 
 

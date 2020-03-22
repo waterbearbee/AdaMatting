@@ -10,7 +10,7 @@ from net.adamatting import AdaMatting
 from loss import task_uncertainty_loss
 
 
-def train(model, optimizer, device, args, logger):
+def train(model, optimizer, device, args, logger, multi_gpu):
     torch.manual_seed(7)
     writer = SummaryWriter()
     model.train()
@@ -41,13 +41,15 @@ def train(model, optimizer, device, args, logger):
             L_overall, L_t, L_a = task_uncertainty_loss(pred_trimap=trimap_adaption, pred_trimap_argmax=t_argmax, 
                                                         pred_alpha=alpha_estimation, gt_trimap=gt_trimap, 
                                                         gt_alpha=gt_alpha, sigma_t=sigma_t, sigma_a=sigma_a)
-
+            if multi_gpu:
+                L_overall, L_t, L_a = L_overall.mean(), L_t.mean(), L_a.mean()
             optimizer.zero_grad()
             L_overall.backward()
             optimizer.step()
 
             if cur_iter % 10 == 0:
-                logger.info("Epoch: {:>3d} | Iter: {:>5d}/{} | Loss: {}".format(epoch, index, len(train_loader), L_overall.item()))
+                logger.info("Epoch: {:03d} | Iter: {:05d}/{} | Loss: {:.4e} | L_t: {:.4e} | L_a: {:.4e}"
+                            .format(epoch, index, len(train_loader), L_overall.item(), L_t.item(), L_a.item()))
                 writer.add_scalar("lr", cur_lr, cur_iter)
                 writer.add_scalar("loss/L_overall", L_overall.item(), cur_iter)
                 writer.add_scalar("loss/L_t", L_t.item(), cur_iter)
@@ -74,14 +76,14 @@ def train(model, optimizer, device, args, logger):
             avg_l_a.update(L_a_valid.item())
 
             if index == 0:
-                trimap_adaption_res = torchvision.utils.make_grid(t_argmax / 2, normalize=True, scale_each=True)
+                trimap_adaption_res = torchvision.utils.make_grid(t_argmax.type(torch.FloatTensor) / 2, normalize=True, scale_each=True)
                 writer.add_image('valid_image/trimap_adaptation', trimap_adaption_res, cur_iter)
                 alpha_estimation_res = torchvision.utils.make_grid(alpha_estimation, normalize=True, scale_each=True)
                 writer.add_image('valid_image/alpha_estimation', alpha_estimation_res, cur_iter)
 
-        logger.info("Loss overall: {}".format(L_overall_valid.item()))
-        logger.info("Loss of trimap adaptation: {}".format(L_t_valid.item()))
-        logger.info("Loss of alpha estimation: {}".format(L_a_valid.item()))
+        logger.info("Loss overall: {:.4e}".format(L_overall_valid.item()))
+        logger.info("Loss of trimap adaptation: {:.4e}".format(L_t_valid.item()))
+        logger.info("Loss of alpha estimation: {:.4e}".format(L_a_valid.item()))
         writer.add_scalar("valid_loss/L_overall", L_overall.item(), cur_iter)
         writer.add_scalar("valid_loss/L_t", L_t_valid.item(), cur_iter)
         writer.add_scalar("valid_loss/L_a", L_a_valid.item(), cur_iter)
@@ -111,22 +113,24 @@ def main():
     for i in range(len(device_ids_str)):
         device_ids.append(i)
 
+    multi_gpu = False
     if args.mode != "prep":
         logger.info("Loading network")
         model = AdaMatting(in_channel=4)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=0)
         if args.cuda:
-            model = model.cuda(device=device_ids[0])
             device = torch.device("cuda:{}".format(device_ids[0]))
             if len(device_ids) > 1 and args.mode=="train":
                 logger.info("Loading with multiple GPUs")
                 model = torch.nn.DataParallel(model, device_ids=device_ids)
+                multi_gpu = True
+            model = model.cuda(device=device_ids[0])
         else:
             device = torch.device("cpu")
 
     if args.mode == "train":
         logger.info("Program runs in train mode")
-        train(model=model, optimizer=optimizer, device=device, args=args, logger=logger)
+        train(model=model, optimizer=optimizer, device=device, args=args, logger=logger, multi_gpu=multi_gpu)
     elif args.mode == "test":
         logger.info("Program runs in test mode")
         test()

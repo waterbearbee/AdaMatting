@@ -31,9 +31,9 @@ class PropUnitCell(nn.Module):
         self.padding = kernel_size[0] // 2, kernel_size[1] // 2
         self.bias = bias
 
-        self.resblock, _ = make_resblock(self.input_dim, 16, blocks=2, stride=1, block=Bottleneck)
+        self.resblock, _ = make_resblock(self.input_dim, 64, blocks=2, stride=1, block=Bottleneck)
 
-        self.conv = nn.Conv2d(in_channels=16 * Bottleneck.expansion + self.hidden_dim,
+        self.conv = nn.Conv2d(in_channels=64 * Bottleneck.expansion + self.hidden_dim,
                               out_channels=4 * self.hidden_dim,
                               kernel_size=self.kernel_size,
                               padding=self.padding,

@@ -99,20 +99,20 @@ class AdaMatting(nn.Module):
         encoder_deep = self.encoder_resblock2(encoder_middle) # 256
         encoder_result = self.encoder_resblock3(encoder_deep) # 256
 
-        shortcut_deep = self.shortcut_deep(encoder_deep) # 64
-        shortcut_middle = self.shortcut_middle(encoder_middle) # 32
-        shortcut_shallow = self.shortcut_shallow(encoder_shallow) # 16
+        shortcut_deep = self.shortcut_deep(encoder_deep) # 256
+        shortcut_middle = self.shortcut_middle(encoder_middle) # 64
+        shortcut_shallow = self.shortcut_shallow(encoder_shallow) # 32
 
         t_decoder_deep = self.t_decoder_upscale1(encoder_result) + shortcut_deep # 64
         t_decoder_middle = self.t_decoder_upscale2(t_decoder_deep) + shortcut_middle # 32
         t_decoder_shallow = self.t_decoder_upscale3(t_decoder_middle) # 16
-        trimap_adaption = self.t_decoder_upscale4(t_decoder_shallow)
+        trimap_adaption = self.t_decoder_upscale4(t_decoder_shallow) # 3
         t_argmax = trimap_adaption.argmax(dim=1)
 
         a_decoder_deep = self.a_decoder_upscale1(encoder_result) # 64
         a_decoder_middle = self.a_decoder_upscale2(a_decoder_deep) + shortcut_middle # 32
         a_decoder_shallow = self.a_decoder_upscale3(a_decoder_middle) + shortcut_shallow # 16
-        a_decoder = self.a_decoder_upscale4(a_decoder_shallow)
+        a_decoder = self.a_decoder_upscale4(a_decoder_shallow) # 1
 
         propunit_input = torch.cat((raw, torch.unsqueeze(t_argmax, dim=1).float(), a_decoder), dim=1) # 
         alpha_estimation = self.propunit(propunit_input)
