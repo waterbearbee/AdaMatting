@@ -8,24 +8,40 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 
+data_transforms = {
+    # values from ImageNet
+    'train': transforms.Compose([
+        transforms.ColorJitter(brightness=0.125, contrast=0.125, saturation=0.125),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ]),
+    'valid': transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ]),
+}
+
+
 class AdaMattingDataset(Dataset):
 
     def __init__(self, raw_data_path, mode):
-        self.patch_size = 320
+        self.crop_size = 320
         self.unknown_code = 128
         self.mode = mode
         self.raw_data_path = raw_data_path
 
         self.fg_path = os.path.join(self.raw_data_path, "train/fg/")
-        self.bg_path = os.path.join(self.raw_data_path, "train/bg")
-        self.a_path = os.path.join(self.raw_data_path, "train/mask")
+        self.bg_path = os.path.join(self.raw_data_path, "train/bg/")
+        self.a_path = os.path.join(self.raw_data_path, "train/mask/")
+
+        self.transformer = data_transforms[self.mode]
 
         with open(os.path.join(self.raw_data_path, "Combined_Dataset/Training_set/training_fg_names.txt")) as f:
             self.fg_files = f.read().splitlines()
         with open(os.path.join(self.raw_data_path, "Combined_Dataset/Training_set/training_bg_names.txt")) as f:
             self.bg_files = f.read().splitlines()
 
-        filename = "{}_names.txt".format(self.mode)
+        filename = "dataset/{}_names.txt".format(self.mode)
         with open(filename, 'r') as file:
             self.names = file.read().splitlines()
     
@@ -74,8 +90,7 @@ class AdaMattingDataset(Dataset):
         bg_name = self.bg_files[bcount]
         img, alpha, _, _ = self.process(im_name, bg_name)
 
-        # crop size 320:640:480 = 1:1:1
-        different_sizes = [(320, 320), (480, 480), (640, 640)]
+        different_sizes = [(320, 320), (800, 800)]
         crop_size = random.choice(different_sizes)
 
         trimap = self.gen_trimap(alpha)
@@ -91,15 +106,26 @@ class AdaMattingDataset(Dataset):
             trimap = np.fliplr(trimap)
             alpha = np.fliplr(alpha)
 
-        x = torch.zeros((4, self.patch_size, self.patch_size), dtype=torch.float)
+        x = torch.zeros((4, self.crop_size, self.crop_size), dtype=torch.float)
         img = img[..., ::-1]  # RGB
         img = transforms.ToPILImage()(img)
+        img = self.transformer(img)
         x[0:3, :, :] = img
         x[3, :, :] = torch.from_numpy(trimap.copy() / 255.)
 
-        y = np.empty((2, self.patch_size, self.patch_size), dtype=np.float32)
+        y = np.empty((2, self.crop_size, self.crop_size), dtype=np.float32)
         y[0, :, :] = alpha / 255.
-        mask = np.equal(trimap, 128).astype(np.float32)
+        # mask = np.equal(trimap, 128).astype(np.float32)
+        """
+        pred_trimap_argmax
+        0: background
+        1: unknown
+        2: foreground
+        """
+        mask = np.zeros(alpha.shape)
+        mask.fill(1)
+        mask[alpha <= 0] = 0
+        mask[alpha >= 255] = 2
         y[1, :, :] = mask
         return x, y
 
@@ -141,6 +167,6 @@ class AdaMattingDataset(Dataset):
         crop = mat[y:y + crop_height, x:x + crop_width]
         h, w = crop.shape[:2]
         ret[0:h, 0:w] = crop
-        if crop_size != (self.patch_size, self.patch_size):
-            ret = cv.resize(ret, dsize=(self.patch_size, self.patch_size), interpolation=cv.INTER_NEAREST)
+        if crop_size != (self.crop_size, self.crop_size):
+            ret = cv.resize(ret, dsize=(self.crop_size, self.crop_size), interpolation=cv.INTER_NEAREST)
         return ret

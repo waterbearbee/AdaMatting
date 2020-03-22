@@ -10,9 +10,9 @@ def trimap_adaptation_loss(pred_trimap, gt_trimap):
 def alpha_estimation_loss(pred_alpha, gt_alpha, pred_trimap_argmax):
     """
     pred_trimap_argmax
-    0: foreground
+    0: background
     1: unknown
-    2: background
+    2: foreground
     """
     mask = (pred_trimap_argmax == 1)
     mask = mask.float()
