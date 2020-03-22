@@ -132,8 +132,8 @@ def main():
         test()
     elif args.mode == "prep":
         logger.info("Program runs in prep mode")
-        composite_dataset(args.raw_data_path, logger)
-        gen_train_valid_names(logger)
+        # composite_dataset(args.raw_data_path, logger)
+        gen_train_valid_names(args.valid_portion, logger)
 
 
 if __name__ == "__main__":

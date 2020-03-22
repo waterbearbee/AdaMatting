@@ -57,21 +57,17 @@ def get_args():
     # Training settings
     parser = argparse.ArgumentParser(description='set arguments')
     parser.add_argument('--mode', type=str, required=True, choices=["train", "test", "prep"], help="set the program to \'train\', \'test\', or \'prep\'")
-    parser.add_argument('--size_h', type=int, required=True, help="height size of input image")
-    parser.add_argument('--size_w', type=int, required=True, help="width size of input image")
-    parser.add_argument('--crop_h', type=str, required=True, help="crop height size of input image")
-    parser.add_argument('--crop_w', type=str, required=True, help="crop width size of input image")
+    parser.add_argument('--valid_portion', type=int, required=True, help="percentage of valid data in all training samples")
     parser.add_argument('--batch_size', type=int, default=64, help='training batch size')
     parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train for')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
     parser.add_argument('--cuda', action='store_true', default=False, help='use cuda?')
     parser.add_argument('--gpu', type=str, default="0", help="choose gpus")
-    parser.add_argument('--crop_or_resize', type=str, default="whole", choices=["resize", "crop", "whole"], help="how manipulate image before test")
-    parser.add_argument('--max_size', type=int, default=1312, help="max size of test image")
     parser.add_argument('--write_log', action="store_true", default=False, help="whether store log to log.txt")
     parser.add_argument('--raw_data_path', type=str, default="/data/datasets/im/AdaMatting/", help="dir where datasets are stored")
     parser.add_argument('--ckpt_path', type=str, default="./ckpts/")
     parser.add_argument('--save_ckpt', action="store_true", default=False, help="whether save checkpoint every 10 epochs")
+    parser.add_argument('--resume', action="store_true", default=False, help="whether resume training from a ckpt")
     args = parser.parse_args()
     return args
 

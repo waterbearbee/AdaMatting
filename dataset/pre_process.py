@@ -219,12 +219,12 @@ def composite_dataset(raw_data_path, logger):
         logger.info('Testing images composited')
 
 
-def gen_train_valid_names(logger):
+def gen_train_valid_names(valid_portion, logger):
     logger.info("Start generating train/valid name files")
     num_fgs = 431
     # num_bgs = 43100
     num_bgs_per_fg = 100
-    num_valid = 8620
+    num_valid = int(valid_portion / 100 * 43100)
 
     names = []
     bcount = 0
