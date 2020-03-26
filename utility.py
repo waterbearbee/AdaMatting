@@ -1,14 +1,17 @@
 import torch
 import argparse
 import logging
+import numpy as np
 
 
-def save_checkpoint(epoch, model, optimizer, cur_iter, max_iter, loss, is_best, ckpt_path):
+def save_checkpoint(epoch, model, optimizer, cur_iter, max_iter, init_lr, loss, is_best, ckpt_path):
     state = {'epoch': epoch,
              'model': model,
              'optimizer': optimizer,
              'cur_iter': cur_iter,
-             'max_iter': max_iter}
+             'max_iter': max_iter,
+             'best_loss': loss,
+             'init_lr': init_lr}
     filename = ckpt_path + "ckpt_{:03d}_{:.4f}.tar".format(epoch, loss)
     torch.save(state, filename)
     # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
@@ -53,6 +56,25 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
+def compute_mse(pred, alpha, trimap):
+    """
+    compute the MSE error given a prediction, a ground truth and a trimap.
+    pred: the predicted alpha matte
+    target: the ground truth alpha matte
+    trimap: the given trimap
+    """
+    num_pixels = float((trimap == 128).sum())
+    return ((pred - alpha) ** 2).sum() / num_pixels
+
+
+def compute_sad(pred, alpha):
+    """
+    compute the SAD error given a prediction and a ground truth.
+    """
+    diff = np.abs(pred - alpha)
+    return np.sum(diff) / 1000
+
+
 def get_args():
     # Training settings
     parser = argparse.ArgumentParser(description='set arguments')
@@ -65,7 +87,7 @@ def get_args():
     parser.add_argument('--gpu', type=str, default="0", help="choose gpus")
     parser.add_argument('--write_log', action="store_true", default=False, help="whether store log to log.txt")
     parser.add_argument('--raw_data_path', type=str, default="/data/datasets/im/AdaMatting/", help="dir where datasets are stored")
-    parser.add_argument('--ckpt_path', type=str, default="./ckpts/")
+    parser.add_argument('--ckpt_path', type=str, default="ckpts/")
     parser.add_argument('--save_ckpt', action="store_true", default=False, help="whether save checkpoint every 10 epochs")
     parser.add_argument('--resume', action="store_true", default=False, help="whether resume training from a ckpt")
     args = parser.parse_args()

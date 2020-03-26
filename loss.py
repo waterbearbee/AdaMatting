@@ -24,8 +24,8 @@ def alpha_estimation_loss(pred_alpha, gt_alpha, pred_trimap_argmax):
     return loss(masked_pred_alpha, masked_gt_alpha) / (num_unknown_pixel + 1e-8)
 
 
-def task_uncertainty_loss(pred_trimap, pred_trimap_argmax, pred_alpha, gt_trimap, gt_alpha, sigma_t, sigma_a):
+def task_uncertainty_loss(pred_trimap, pred_trimap_argmax, pred_alpha, gt_trimap, gt_alpha, log_sigma_t_sqr, log_sigma_a_sqr):
     Lt = trimap_adaptation_loss(pred_trimap, gt_trimap)
     La = alpha_estimation_loss(pred_alpha, gt_alpha, pred_trimap_argmax)
-    overall = Lt / (2 * sigma_t * sigma_t) + La / (sigma_a * sigma_a) + torch.log(2 * sigma_a * sigma_t)
+    overall = Lt / (2 * torch.exp(log_sigma_t_sqr)) + La / torch.exp(log_sigma_a_sqr) + log_sigma_t_sqr / 2 + log_sigma_a_sqr / 2
     return overall, Lt, La

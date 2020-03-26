@@ -87,8 +87,8 @@ class AdaMatting(nn.Module):
             bias=True)
 
         # Task uncertainty loss
-        self.sigma_t = nn.Parameter(torch.Tensor([4.0]))
-        self.sigma_a = nn.Parameter(torch.Tensor([4.0]))
+        self.log_sigma_t_sqr = nn.Parameter(torch.log(torch.Tensor([16.0])))
+        self.log_sigma_a_sqr = nn.Parameter(torch.log(torch.Tensor([16.0])))
 
 
     def forward(self, x):
@@ -117,4 +117,4 @@ class AdaMatting(nn.Module):
         propunit_input = torch.cat((raw, torch.unsqueeze(t_argmax, dim=1).float(), a_decoder), dim=1) # 
         alpha_estimation = self.propunit(propunit_input)
 
-        return trimap_adaption, t_argmax, alpha_estimation, self.sigma_t, self.sigma_a
+        return trimap_adaption, t_argmax, alpha_estimation
